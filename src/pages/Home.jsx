@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import MovieCard from "../components/MovieCard";
-import Footer from "./Footer";
+import HomeMovieCard from "../components/HomeMovieCard";
 
 const API_URL =
   "https://api.themoviedb.org/3/discover/movie?api_key=80d491707d8cf7b38aa19c7ccab0952f&sort_by=popularity.desc";
@@ -143,11 +142,10 @@ export default function Home() {
 
         <div className="flex gap-6 overflow-x-auto scrollbar-hide">
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <HomeMovieCard key={movie.id} movie={movie} />
           ))}
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

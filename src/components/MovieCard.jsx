@@ -1,24 +1,33 @@
-import { Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
 export default function MovieCard({ movie }) {
   return (
-    <div className="min-w-[180px] bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition cursor-pointer">
-      <img
-        src={`${IMAGE_BASE}${movie.poster_path}`}
-        alt={movie.title}
-        className="h-[260px] w-full object-cover"
-      />
+    <Link to={`/movies/${movie.id}`} className="block">
+      <div className="group cursor-pointer">
+        <div className="overflow-hidden rounded-xl bg-gray-800 aspect-[2/3]">
+          <img
+            src={
+              movie.poster_path
+                ? IMAGE_BASE + movie.poster_path
+                : "/placeholder.jpg"
+            }
+            alt={movie.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
 
-      <div className="p-3">
-        <h3 className="font-semibold text-sm truncate">{movie.title}</h3>
-
-        <div className="flex items-center gap-1 text-xs text-yellow-400 mt-1">
-          <Star size={14} fill="currentColor" />
-          {movie.vote_average.toFixed(1)}
+        <div className="mt-3">
+          <h3 className="text-white font-semibold truncate">
+            {movie.title}
+          </h3>
+          <p className="text-gray-400 text-sm">
+            ⭐ {movie.vote_average?.toFixed(1)} •{" "}
+            {movie.release_date?.slice(0, 4)}
+          </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

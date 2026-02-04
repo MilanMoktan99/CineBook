@@ -12,7 +12,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const { register: formRegister, handleSubmit } = useForm();
+  const { register: formRegister, handleSubmit, formState: { errors, isSubmitted } } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -42,13 +42,26 @@ export default function Login() {
 
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
+        {isSubmitted && Object.keys(errors).length > 0 && (
+          <div className="form-errors">
+            {errors.name && <p className="text-red-500 mb-2">{errors.name.message}</p>}
+            {errors.email && <p className="text-red-500 mb-2">{errors.email.message}</p>}
+            {errors.password && <p className="text-red-500 mb-2">{errors.password.message}</p>}
+          </div>
+        )}
+
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="relative">
             <Mail className="absolute left-4 top-3 text-gray-400" size={18} />
             <input
               placeholder="Email"
               className="w-full bg-gray-800 text-white placeholder-gray-400 pl-11 py-2 rounded-lg outline-none focus:ring-2 focus:ring-red-600"
-              {...formRegister("email", { required: "Email required" })}
+              {...formRegister("email", { required: "Email required",
+                pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Please enter a valid email address",
+              },
+               })}
             />
           </div>
 
@@ -58,7 +71,17 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               className="w-full bg-gray-800 text-white placeholder-gray-400 pl-11 py-2 rounded-lg outline-none focus:ring-2 focus:ring-red-600"
-              {...formRegister("password", { required: "Password required" })}
+              {...formRegister("password", { required: "Password required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be 8 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  message:
+                    "Password must contain 1 uppercase, 1 lowercase, 1 number & 1 special character",
+                },
+               })}
             />
             <button
               type="button"
