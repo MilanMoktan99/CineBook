@@ -27,9 +27,7 @@ export default function MovieDetails() {
       setShowtimes(movieShows);
 
       const theatreSnap = await getDocs(collection(db, "theatres"));
-      setTheatres(
-        theatreSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-      );
+      setTheatres(theatreSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     };
     fetchData();
   }, [id]);
@@ -43,8 +41,13 @@ export default function MovieDetails() {
     return match && match[2].length === 11 ? match[2] : null;
   }
 
+  // Filter showtimes by selected theatre
+  const theatreShowtimes = selectedTheatre
+    ? showtimes.filter((s) => s.theatreId === selectedTheatre.id)
+    : [];
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white px-6 md:px-24 py-6">
+    <div className="min-h-screen bg-gray-900 text-white px-6 md:px-32 py-6">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -52,6 +55,8 @@ export default function MovieDetails() {
       >
         <ChevronLeft size={24} /> Back
       </button>
+
+      <p className="mb-6 text-4xl font-bold">{movie.title}</p>
 
       {/* Two Columns */}
       <div className="flex flex-col lg:flex-row gap-8">
@@ -63,7 +68,9 @@ export default function MovieDetails() {
               <iframe
                 width="100%"
                 height="400px"
-                src={`https://www.youtube.com/embed/${getYouTubeID(movie.trailer)}?autoplay=1&mute=1`}
+                src={`https://www.youtube.com/embed/${getYouTubeID(
+                  movie.trailer
+                )}?autoplay=1&mute=1`}
                 title={movie.title}
                 frameBorder="0"
                 allow="autoplay; encrypted-media"
@@ -91,13 +98,13 @@ export default function MovieDetails() {
         {/* Column 2: Now Showing + Buy Tickets */}
         <div className="w-full md:w-[300px] flex flex-col gap-4">
           {/* Now Showing (1.5x trailer height) */}
-          <div className="bg-gray-800 rounded-xl p-6 flex-1 max-h-[450px]">
+          <div className="bg-gray-800 rounded-xl p-6 flex-1 max-h-[450px] flex flex-col">
             <h2 className="text-2xl font-semibold mb-4">Now Showing</h2>
 
-            {/* Theatre Selection */}
-            {!selectedTheatre ? (
+            {/* Theatre Selection Dropdown */}
+            {!selectedTheatre && (
               <select
-                className="p-3 rounded bg-gray-700 text-white mb-4 w-full"
+                className="p-3 rounded bg-gray-700 text-white w-full mb-4"
                 value=""
                 onChange={(e) => {
                   const theatre = theatres.find((t) => t.id === e.target.value);
@@ -113,50 +120,55 @@ export default function MovieDetails() {
                   </option>
                 ))}
               </select>
-            ) : (
-              <div className="mb-4">
-                <p>
-                  Theatre:{" "}
-                  <span className="font-semibold">{selectedTheatre.name}</span>
-                </p>
-                <button
-                  className="mt-2 px-3 py-2 bg-gray-700 rounded hover:bg-gray-600 transition"
-                  onClick={() => setSelectedTheatre(null)}
-                >
-                  Change Theatre
-                </button>
-              </div>
             )}
 
-            {/* Showtimes */}
-            {selectedTheatre ? (
-              showtimes.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  {showtimes.map((show) => (
-                    <button
-                      key={show.id}
-                      onClick={() => setSelectedShowtime(show)}
-                      className={`px-4 py-2 rounded ${
-                        selectedShowtime?.id === show.id
-                          ? "bg-red-700"
-                          : "bg-red-600"
-                      }`}
-                    >
-                      {show.time}
-                    </button>
-                  ))}
+            {/* Showtimes appear only after theatre is selected */}
+            {selectedTheatre && (
+              <>
+                {theatreShowtimes.length === 0 ? (
+                  <p className="text-gray-400 mb-4">No showtimes available</p>
+                ) : (
+                  <div className="flex flex-col gap-2 mb-4">
+                    {theatreShowtimes.map((show) => (
+                      <button
+                        key={show.id}
+                        onClick={() => setSelectedShowtime(show)}
+                        className={`px-4 py-2 rounded ${
+                          selectedShowtime?.id === show.id
+                            ? "bg-red-700"
+                            : "bg-red-600"
+                        }`}
+                      >
+                        {show.time}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Selected Theatre info + Change button */}
+                <div className="mt-auto">
+                  <p>
+                    Theatre: <span className="font-semibold">{selectedTheatre.name}</span>
+                  </p>
+                  <button
+                    className="mt-2 px-3 py-2 bg-gray-700 rounded hover:bg-gray-600 transition w-full"
+                    onClick={() => {
+                      setSelectedTheatre(null);
+                      setSelectedShowtime(null);
+                    }}
+                  >
+                    Change Theatre
+                  </button>
                 </div>
-              ) : (
-                <p className="text-gray-400">No showtimes available</p>
-              )
-            ) : null}
+              </>
+            )}
           </div>
 
           {/* Buy Tickets below Now Showing */}
           <button
-            disabled={!selectedShowtime}
+            disabled={!selectedShowtime || !selectedTheatre}
             className={`px-6 py-3 rounded-lg font-semibold ${
-              selectedShowtime
+              selectedShowtime && selectedTheatre
                 ? "bg-red-600 hover:bg-red-700"
                 : "bg-gray-700 cursor-not-allowed"
             }`}
