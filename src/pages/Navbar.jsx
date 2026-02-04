@@ -35,10 +35,11 @@ export default function Navbar() {
     Cookies.remove("role");
     logout();
     navigate("/login");
+    setOpen(false)
   };
 
   return (
-    <nav className="bg-black/90 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+    <nav className="bg-black/90 backdrop-blur border-b border-gray-800 sticky top-0  z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* LEFT */}
         <div className="flex items-center gap-8">
@@ -69,7 +70,7 @@ export default function Navbar() {
           {/* AUTH SECTION */}
           {!user ? (
             <Link
-              to="/login"
+              to="/register"
               className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-full font-medium"
             >
               Sign In
@@ -141,7 +142,7 @@ export default function Navbar() {
 
           <hr />
           {!user ? (
-            <Link to="/login" className="block text-center bg-red-600 py-2 rounded-full">
+            <Link to="/register" className="block text-center bg-red-600 py-2 rounded-full">
               Sign In
             </Link>
           ) : (
