@@ -9,6 +9,7 @@ import Register from './pages/Register'
 import MyBooking from './pages/MyBooking'
 import { seedFirestore } from './seed/seedData'
 import Footer from './pages/Footer'
+import SeatMap from './components/SeatMap'
 
 const App = () => {
 
@@ -26,6 +27,7 @@ const App = () => {
         <Route path='/movies' element={<Movies />} />
         <Route path='/movies/:id' element={<MovieDetails />} />
         <Route path='/my-booking' element={<MyBooking />} />  
+        <Route path="/seat-map/:movieId/:theatreId/:showtimeId" element={<SeatMap />} />
       </Routes>
       <Footer />
     </>

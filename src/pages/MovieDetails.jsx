@@ -72,7 +72,7 @@ export default function MovieDetails() {
                 width="100%"
                 height="400px"
                 src={`https://www.youtube.com/embed/${getYouTubeID(
-                  movie.trailer
+                  movie.trailer,
                 )}?autoplay=1&mute=1`}
                 title={movie.title}
                 frameBorder="0"
@@ -173,13 +173,18 @@ export default function MovieDetails() {
           {/* Buy Tickets below Now Showing */}
           <button
             disabled={!selectedShowtime || !selectedTheatre}
+            onClick={() =>
+              navigate(
+                `/seat-map/${id}/${selectedTheatre.id}/${selectedShowtime.id}`,
+              )
+            }
             className={`px-6 py-3 rounded-lg font-semibold ${
               selectedShowtime && selectedTheatre
                 ? "bg-red-600 hover:bg-red-700"
                 : "bg-gray-700 cursor-not-allowed"
             }`}
           >
-            Buy Tickets
+            Select Seat
           </button>
         </div>
       </div>
