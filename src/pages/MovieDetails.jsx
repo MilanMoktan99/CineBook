@@ -27,7 +27,9 @@ export default function MovieDetails() {
       setShowtimes(movieShows);
 
       const theatreSnap = await getDocs(collection(db, "theatres"));
-      setTheatres(theatreSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setTheatres(
+        theatreSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      );
     };
     fetchData();
   }, [id]);
@@ -35,10 +37,11 @@ export default function MovieDetails() {
   if (!movie) return <div className="text-white p-6">Loading...</div>;
 
   function getYouTubeID(url) {
+    if (!url) return null;
     const regExp =
       /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
+    return match ? match[2] : null;
   }
 
   // Filter showtimes by selected theatre
@@ -64,7 +67,7 @@ export default function MovieDetails() {
         <div className="flex-1 flex flex-col gap-6">
           {/* Trailer */}
           <div className="bg-black rounded-xl overflow-hidden">
-            {movie.trailer ? (
+            {movie.trailer && getYouTubeID(movie.trailer) ? (
               <iframe
                 width="100%"
                 height="400px"
@@ -73,7 +76,7 @@ export default function MovieDetails() {
                 )}?autoplay=1&mute=1`}
                 title={movie.title}
                 frameBorder="0"
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; picture-in-picture"
                 allowFullScreen
                 className="rounded-xl"
               />
@@ -148,7 +151,10 @@ export default function MovieDetails() {
                 {/* Selected Theatre info + Change button */}
                 <div className="mt-auto">
                   <p>
-                    Theatre: <span className="font-semibold">{selectedTheatre.name}</span>
+                    Theatre:{" "}
+                    <span className="font-semibold">
+                      {selectedTheatre.name}
+                    </span>
                   </p>
                   <button
                     className="mt-2 px-3 py-2 bg-gray-700 rounded hover:bg-gray-600 transition w-full"

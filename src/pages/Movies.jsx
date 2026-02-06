@@ -25,7 +25,7 @@ export default function Movies() {
     };
 
     fetchMovies();
-  }, []);
+  }, [movies]);
 
   if (loading) {
     return (

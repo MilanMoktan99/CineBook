@@ -91,7 +91,7 @@ export default function Home() {
                 </span>
               </div>
 
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-300 mb-6 max-w-[400px]">
                 {heroMovie.overview.slice(0, 100)}...
               </p>
 
